@@ -5,7 +5,8 @@ app.debug = True
 
 @app.route("/")
 def index():
-    return "Hello World"
+    name = "Panashe"
+    return render_template("index.html", name=name)
 
 if (__name__ == "__main__"):
     app.run(use_reloader=False)
