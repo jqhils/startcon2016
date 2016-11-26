@@ -6,6 +6,10 @@ app.debug = True
 def index():
     return render_template("index.html")
 
+@app.route("/google2e4c61498b4fdd7f.html")
+def googlecheck():
+    return render_template("google2e4c61498b4fdd7f.html")
+
 @app.route("/routesMap", methods=['GET', 'POST'])
 def routeMap():
     if (request.method == "POST"):
