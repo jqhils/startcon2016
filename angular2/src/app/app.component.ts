@@ -60,7 +60,22 @@ export class AppComponent implements OnInit {
 
     submitLocationForm(form: any, valid: boolean): void {
         if (!valid) return;
-        
+
+        this.mapService.getLatAndLng(form.origin).subscribe(
+            (origin) => {
+				this.route.origin = origin,
+				this.newDirection()
+			},
+            () => console.log("Error"),
+            () => console.log("Done"));
+
+        this.mapService.getLatAndLng(form.destination).subscribe(
+            (destination) => {
+				this.route.destination = destination
+				this.newDirection();
+			},
+            () => console.log("Error"),
+            () => console.log("Done"));
     }
 
     submitTransportForm(form: any, valid: boolean): void {
@@ -79,31 +94,21 @@ export class AppComponent implements OnInit {
         }
     }
 
-    test(): void {
-        this.mapService.getLatAndLng(this.origin.name).subscribe(
-            (origin) => this.route.origin = origin,
-            () => console.log("ssss"),
-            () => console.log("ssss"));
-
-        this.mapService.getLatAndLng(this.destination.name).subscribe(
-            (destination) => this.route.destination = destination,
-            () => console.log("ssss"),
-            () => console.log("ssss"));
-    }
-
     movePointA(marker: any): void {
 		this.route.origin.lat = marker.coords.lat;
 		this.route.origin.lng = marker.coords.lng;
 
-		this.directive.newDirection(this.route);
-		this.durations = DirectionsMapDirective.durations;
-		this.distances = DirectionsMapDirective.distances;
+		this.newDirection();
     }
 
     movePointB(marker: any): void {
 		this.route.destination.lat = marker.coords.lat;
 		this.route.destination.lng = marker.coords.lng;
+		
+		this.newDirection();
+	}
 
+	newDirection(): void {
 		this.directive.newDirection(this.route);
 		this.durations = DirectionsMapDirective.durations;
 		this.distances = DirectionsMapDirective.distances;

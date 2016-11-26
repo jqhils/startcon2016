@@ -1,7 +1,9 @@
 <div id="floating-panel">
-    <!--<input type="text" [(ngModel)]="pointA" (keyUp)="searchLocation(true)">
-    <input type="text" [(ngModel)]="pointB" (keyUp)="searchLocation(false)">
-    <button (click)="test()">Submit</button>-->
+	<form [formGroup]="locationForm" (ngSubmit)="submitLocationForm(locationForm.value, locationForm.valid)" novalidate>
+		<input type="text" formControlName="origin" (keyUp)="searchLocation(true)">
+		<input type="text" formControlName="destination" (keyUp)="searchLocation(false)">
+		<button type="submit">Submit</button>
+	</form>
     <div *ngIf="location">
         <form [formGroup]="transportForm" (ngSubmit)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
             <select formControlName="typeA">
