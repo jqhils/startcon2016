@@ -18,19 +18,26 @@
         </form>
     </div>
 </div>
-<sebm-google-map>
-    <sebm-google-map-directions [origin]="route.origin" [destination]="route.destination"></sebm-google-map-directions>
-    <!--<sebm-google-map-marker 
+<sebm-google-map
+	[latitude]="-33.81224331648925"
+	[longitude]="151.0953140258789"
+	[zoom]="12">
+
+	<sebm-google-map-directions [origin]="route.origin" [destination]="route.destination"></sebm-google-map-directions>
+
+    <sebm-google-map-marker 
           [latitude]="route.origin.lat"
           [longitude]="route.origin.lng"
-          [label]="route.origin.name"
-          [markerDraggable]="temp"
-          (dragEnd)="movePoint(m, $event)">-->
+          label="Point A"
+          [markerDraggable]="true"
+		  (dragEnd)="movePointA($event)">
+	</sebm-google-map-marker>
 
-    <!--<sebm-google-map-marker 
+    <sebm-google-map-marker 
           [latitude]="route.destination.lat"
           [longitude]="route.destination.lng"
-          [label]="route.destination.name"
-          [markerDraggable]="temp"
-          (dragEnd)="movePoint(m, $event)">-->
+          label="Point B"
+          [markerDraggable]="true"
+          (dragEnd)="movePointB($event)">
+	</sebm-google-map-marker>
 </sebm-google-map>

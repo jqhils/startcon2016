@@ -1,7 +1,8 @@
 /* Always set the map height explicitly to define the size of the div
  * element that contains the map. */
 .sebm-google-map-container {
-    width: 100%
+	height: 500px;
+    width: 100%;
 }
 
 #floating-panel {

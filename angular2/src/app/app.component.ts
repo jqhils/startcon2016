@@ -1,26 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 
+import { DirectionsMapDirective } from './directionsmap.directive';
 import { MapService } from './map.service';
 import { Location, Route } from './location';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 
 export class AppComponent implements OnInit {
     private locationForm: FormGroup;
     private transportForm: FormGroup;
 
-    private pointA: any;
-    private pointB: any;
+    private origin: Location;
+    private destination: Location;
 
-    private temp: boolean = true;
+    private route: Route;
+    private transport: any;
 
-    route: Route;
-    transport: any;
+	@ViewChild(DirectionsMapDirective) directive;
 
     constructor(private mapService: MapService,
                 private formBuilder: FormBuilder) {}
@@ -36,19 +37,21 @@ export class AppComponent implements OnInit {
             typeB: ["", Validators.required],
         });
 
-        let origin: Location = {
-            lat: 0,
-            lng: 0
+        this.origin = {
+			name: 'Point A',
+            lat: -33.77971806012011,
+            lng: 151.1334228515625
         }
 
-        let destination: Location = {
-            lat: 0,
-            lng: 0
+        this.destination = {
+			name: 'Point B',
+            lat: -33.85673152928874,
+            lng: 151.06613159179688
         }
 
         this.route = {
-            origin: origin,
-            destination: destination
+            origin: this.origin,
+            destination: this.destination
         }
     }
 
@@ -66,9 +69,6 @@ export class AppComponent implements OnInit {
         }
     }
 
-    movePoint(arg1: any, arg2: any): void {
-    }
-
     searchLocation(point1: boolean): void {
         if (point1) {
             //this.mapService.getLatAndLong()
@@ -77,14 +77,28 @@ export class AppComponent implements OnInit {
     }
 
     test(): void {
-        this.mapService.getLatAndLng(this.pointA.value).subscribe(
+        this.mapService.getLatAndLng(this.origin.name).subscribe(
             (origin) => this.route.origin = origin,
             () => console.log("ssss"),
             () => console.log("ssss"));
 
-        this.mapService.getLatAndLng(this.pointB.value).subscribe(
+        this.mapService.getLatAndLng(this.destination.name).subscribe(
             (destination) => this.route.destination = destination,
             () => console.log("ssss"),
             () => console.log("ssss"));
     }
+
+    movePointA(marker: any): void {
+		this.route.origin.lat = marker.coords.lat;
+		this.route.origin.lng = marker.coords.lng;
+
+		this.directive.newDirection(this.route);
+    }
+
+    movePointB(marker: any): void {
+		this.route.destination.lat = marker.coords.lat;
+		this.route.destination.lng = marker.coords.lng;
+
+		this.directive.newDirection(this.route);
+	}
 }
