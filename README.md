@@ -5,4 +5,4 @@ Set-up Steps
 
 1. Run 'virtualenv env'
 2. Run 'source env/bin/activate'
-3. Run 'pip install requirements.txt'
+3. Run 'pip install -r requirements.txt'
