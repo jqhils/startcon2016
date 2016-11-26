@@ -4,21 +4,19 @@
 		<input type="text" formControlName="destination" (keyUp)="searchLocation(false)">
 		<button type="submit">Submit</button>
 	</form>
-    <div *ngIf="location">
-        <form [formGroup]="transportForm" (ngSubmit)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
-            <select formControlName="typeA">
-                <option value="car">Car</option>
-                <option value="bus">Bus</option>
-                <option value="train">Train</option>
-            </select>
-            <select formControlName="typeB">
-                <option value="car">Car</option>
-                <option value="bus">Bus</option>
-                <option value="train">Train</option>
-            </select><br/>
-            <button type="submit" [disabled]="!transportForm.valid">Submit</button>
-        </form>
-    </div>
+	<form [formGroup]="transportForm" (ngSubmit)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
+		<select formControlName="typeA">
+			<option value="DRIVING:">Car</option>
+			<option value="TRANSIT:BUS">Bus</option>
+			<option value="TRANSIT:TRAIN">Train</option>
+		</select>
+		<select formControlName="typeB">
+			<option value="DRIVING:">Car</option>
+			<option value="TRANSIT:BUS">Bus</option>
+			<option value="TRANSIT:TRAIN">Train</option>
+		</select><br/>
+		<button type="submit" [disabled]="!transportForm.valid">Submit</button>
+	</form>
 </div>
 <sebm-google-map
 	[latitude]="-33.81224331648925"

@@ -32,7 +32,6 @@ export class MapService {
         return this.http.get(url).map((response) => {
             let object = response.json() || {}
             let location: Location = {
-                name: place,
                 lat: object.results[0].geometry.location.lat,
                 lng: object.results[0].geometry.location.lng
             }

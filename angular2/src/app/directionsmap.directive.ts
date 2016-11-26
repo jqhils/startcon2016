@@ -28,9 +28,8 @@ export class DirectionsMapDirective {
 
 	//TODO Way to make this non-static?
 	static getDisplays(map: any): any {
-		//TODO Change this magic number later
 		if (DirectionsMapDirective.directionDisplays.length <= 0) {
-			for (let i = 0; i < 3; i++) {
+			for (let i = 0; i < 2; i++) {
 				let display = new google.maps.DirectionsRenderer;
 				display.setMap(map);
 				DirectionsMapDirective.directionDisplays[i] = display;
@@ -49,32 +48,54 @@ export class DirectionsMapDirective {
 			distances.length = 0;
 			durations.length = 0;
 			
-			//TODO Yeah for magic numbers!
-			for (let i = 0; i < 3; i++) {
-				directionsService.route({
-					origin: {lat: route.origin.lat, lng: route.origin.lng},
-					destination: {lat: route.destination.lat, lng: route.destination.lng},
-					waypoints: [],
-					optimizeWaypoints: true,
-					travelMode: i == 0 ? 'DRIVING' : 'TRANSIT', //Ugh
-					transitOptions: i == 1 ? { modes: ['BUS'] } : { modes: ['TRAIN'] }//Ugh
-				}, function(direction, status) {
-					if (status === 'OK') {
-						let totalDistance = 0;
-						let totalDuration = 0;
-						let legs = direction.routes[0].legs;
-						for(let i = 0; i < legs.length; i++) {
-							totalDistance += legs[i].distance.value;
-							totalDuration += legs[i].duration.value;
-						}
-						distances.push(totalDistance);
-						durations.push(totalDuration);
-						directionDisplays[i].setDirections(direction);
-					} else {
-						console.log('Directions request failed due to ' + status);
+			//TODO Callback functions for durations and distances
+			directionsService.route({
+				origin: {lat: route.origin.lat, lng: route.origin.lng},
+				destination: {lat: route.destination.lat, lng: route.destination.lng},
+				waypoints: [],
+				optimizeWaypoints: true,
+				travelMode: route.typeA.mode,
+				transitOptions: { modes: route.typeA.modeTypes }
+			}, function(direction, status) {
+				if (status === 'OK') {
+					let totalDistance = 0;
+					let totalDuration = 0;
+					let legs = direction.routes[0].legs;
+					for(let i = 0; i < legs.length; i++) {
+						totalDistance += legs[i].distance.value;
+						totalDuration += legs[i].duration.value;
 					}
-				});
-			}
+					distances.push(totalDistance);
+					durations.push(totalDuration);
+					directionDisplays[0].setDirections(direction);
+				} else {
+					console.log('Directions request failed due to ' + status);
+				}
+			});
+
+			directionsService.route({
+				origin: {lat: route.origin.lat, lng: route.origin.lng},
+				destination: {lat: route.destination.lat, lng: route.destination.lng},
+				waypoints: [],
+				optimizeWaypoints: true,
+				travelMode: route.typeB.mode,
+				transitOptions: { modes: route.typeB.modeTypes }
+			}, function(direction, status) {
+				if (status === 'OK') {
+					let totalDistance = 0;
+					let totalDuration = 0;
+					let legs = direction.routes[0].legs;
+					for(let i = 0; i < legs.length; i++) {
+						totalDistance += legs[i].distance.value;
+						totalDuration += legs[i].duration.value;
+					}
+					distances.push(totalDistance);
+					durations.push(totalDuration);
+					directionDisplays[1].setDirections(direction);
+				} else {
+					console.log('Directions request failed due to ' + status);
+				}
+			});
         });
 	}
 }

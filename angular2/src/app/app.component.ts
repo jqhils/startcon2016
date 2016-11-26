@@ -3,7 +3,7 @@ import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms'
 
 import { DirectionsMapDirective } from './directionsmap.directive';
 import { MapService } from './map.service';
-import { Location, Route } from './location';
+import { Location, TransportType, Route } from './location';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
 	private durations: number[];
 	private distances: number[];
 
-	@ViewChild(DirectionsMapDirective) directive;
+	@ViewChild(DirectionsMapDirective) directions;
 
     constructor(private mapService: MapService,
                 private formBuilder: FormBuilder) {}
@@ -41,20 +41,30 @@ export class AppComponent implements OnInit {
         });
 
         this.origin = {
-			name: 'Point A',
             lat: -33.77971806012011,
             lng: 151.1334228515625
         }
 
         this.destination = {
-			name: 'Point B',
             lat: -33.85673152928874,
             lng: 151.06613159179688
         }
 
+		let typeA: TransportType = {
+			mode: "DRIVING",
+			modeTypes: []
+		}
+
+		let typeB: TransportType = {
+			mode: "TRANSIT",
+			modeTypes: ["BUS"]
+		}
+
         this.route = {
             origin: this.origin,
-            destination: this.destination
+            destination: this.destination,
+			typeA: typeA,
+			typeB: typeB,
         }
     }
 
@@ -81,10 +91,20 @@ export class AppComponent implements OnInit {
     submitTransportForm(form: any, valid: boolean): void {
         if (!valid) return;
 
-        this.transport = {
-            typeA: form.typeA,
-            typeB: form.typeB,
-        }
+		let a = form.typeA.split(":");
+		let b = form.typeB.split(":");
+
+		this.route.typeA = {
+			mode: a[0],
+			modeTypes: a[1] ? [a[1]] : []
+		}
+
+		this.route.typeB = {
+			mode: b[0],
+			modeTypes: b[1] ? [b[1]] : []
+		}
+
+		this.newDirection();
     }
 
     searchLocation(point1: boolean): void {
@@ -109,7 +129,7 @@ export class AppComponent implements OnInit {
 	}
 
 	newDirection(): void {
-		this.directive.newDirection(this.route);
+		this.directions.newDirection(this.route);
 		this.durations = DirectionsMapDirective.durations;
 		this.distances = DirectionsMapDirective.distances;
 	}
