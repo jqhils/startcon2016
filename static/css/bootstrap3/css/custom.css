@@ -28,6 +28,18 @@ body {
 	font-weight: 300;
 }
 
+.selectModeTitle {
+	background-color: rgba(0, 153, 204, 0.2)!important;
+	font-size: 25px;
+	text-align: left;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	font-weight: 300;
+	opacity: 0.2;
+	color: white;
+}
+
+
 .footer {
 	background-color: #C13939
 }
