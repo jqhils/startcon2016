@@ -3,7 +3,7 @@
 {% block head %}
     {{ super() }}
 {% endblock %}
-	
+
 {% block content %}
 	<div class = "titleBack">
 		<div>Eco Comparison</div>
@@ -15,7 +15,7 @@
 			<div class = "col-sm-8" style="background-color:blue;">. col sm  8</div>-->
 		</div>
 	</div>
-	<form class = "form-horizontal" role= "form">
+	<form class = "form-horizontal" role= "form" action="/routesMap" method="post">
 		<div class = "form-group">
 			<label class = "col-xs-2 control-label" for="destFrom"> From:</label>
 			<div class = "col-xs-10">

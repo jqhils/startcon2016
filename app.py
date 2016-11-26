@@ -1,5 +1,4 @@
-from flask import (Flask, render_template, abort, redirect, url_for)
-
+from flask import (Flask, render_template, request, redirect, url_for)
 app = Flask(__name__)
 app.debug = True
 
@@ -7,8 +6,11 @@ app.debug = True
 def index():
     return render_template("index.html")
 
-@app.route("/routesMap")
+@app.route("/routesMap", methods=['GET', 'POST'])
 def routeMap():
-    return render_template("routesMap.html")
+    if (request.method == "POST"):
+        return render_template("routesMap.html")
+    else:
+        return render_template("routesMap.html")
 if (__name__ == "__main__"):
     app.run(use_reloader=False)
