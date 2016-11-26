@@ -15,8 +15,7 @@
 				<div class = "col-sm-8" style="background-color:blue;">. col sm  8</div>-->
 			</div>
 		</div>
-		<script src = "https://maps.googleapis.com/maps/api/js?
-						   key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw&sensor=false">
+		<script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw">
 		</script>
 		<script type="text/javascript">
 		  function initialize() {
@@ -71,6 +70,6 @@
 		  <div class="col-xs-5">.col-sm-4</div>
 		</div>
 	</div>
-	<script src="bootstrap3/js/jquery-3.1.0.min.js"></script>
-    <script src="bootstrap3/js/bootstrap.min.js"></script>
+	<script src="{{ url_for('static', filename='css/bootstrap3/js/jquery-3.1.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/bootstrap3/js/bootstrap.min.js') }}"></script>
 {% endblock %}
