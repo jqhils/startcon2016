@@ -1,5 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+
+import { Observable, Subject } from 'rxjs';
+import 'rxjs/Rx';
 
 import { DirectionsMapDirective } from './directionsmap.directive';
 import { MapService } from './map.service';
@@ -11,7 +14,7 @@ import { Location, TransportType, Route } from './location';
   styleUrls: ['./app.component.css'],
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
     private locationForm: FormGroup;
     private transportForm: FormGroup;
 
@@ -19,7 +22,11 @@ export class AppComponent implements OnInit {
     private destination: Location;
 
     private route: Route;
-    private transport: any;
+
+	private suggestStream1: Subject<string>;
+	private suggestStream2: Subject<string>;
+	private suggestions1: Observable<string[]>;
+	private suggestions2: Observable<string[]>;
 
 	private durations: number[];
 	private distances: number[];
@@ -27,19 +34,7 @@ export class AppComponent implements OnInit {
 	@ViewChild(DirectionsMapDirective) directions;
 
     constructor(private mapService: MapService,
-                private formBuilder: FormBuilder) {}
-
-    ngOnInit() {
-        this.locationForm = this.formBuilder.group({
-            origin: ["", Validators.required],
-            destination: ["", Validators.required],
-        });
-
-        this.transportForm = this.formBuilder.group({
-            typeA: ["", Validators.required],
-            typeB: ["", Validators.required],
-        });
-
+                private formBuilder: FormBuilder) {
         this.origin = {
             lat: -33.77971806012011,
             lng: 151.1334228515625
@@ -66,7 +61,45 @@ export class AppComponent implements OnInit {
 			typeA: typeA,
 			typeB: typeB,
         }
+
+		this.suggestStream1 = new Subject<string>();
+		this.suggestStream2 = new Subject<string>();
+	}
+
+    ngOnInit() {
+        this.locationForm = this.formBuilder.group({
+            origin: ["", Validators.required],
+            destination: ["", Validators.required],
+        });
+
+        this.transportForm = this.formBuilder.group({
+            typeA: ["", Validators.required],
+            typeB: ["", Validators.required],
+        });
+
+		this.suggestions1 = this.suggestStream1
+			.debounceTime(300)
+			.distinctUntilChanged()
+			.switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
+			.catch(error => {
+				console.log(error)
+				return Observable.of<string[]>([])
+			});
+
+		this.suggestions2 = this.suggestStream2
+			.debounceTime(300)
+			.distinctUntilChanged()
+			.switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
+			.catch(error => {
+				console.log(error)
+				return Observable.of<string[]>([])
+			});
     }
+
+	ngOnDestroy() {
+		this.suggestStream1.unsubscribe();
+		this.suggestStream2.unsubscribe();
+	}
 
     submitLocationForm(form: any, valid: boolean): void {
         if (!valid) return;
@@ -107,26 +140,28 @@ export class AppComponent implements OnInit {
 		this.newDirection();
     }
 
-    searchLocation(point1: boolean): void {
-        if (point1) {
-            //this.mapService.getLatAndLong()
-        } else {
-        }
+    searchLocation(place: string, origin: boolean): void {
+		if (origin) this.suggestStream1.next(place);
+		else this.suggestStream2.next(place);
     }
 
-    movePointA(marker: any): void {
-		this.route.origin.lat = marker.coords.lat;
-		this.route.origin.lng = marker.coords.lng;
-
-		this.newDirection();
-    }
-
-    movePointB(marker: any): void {
-		this.route.destination.lat = marker.coords.lat;
-		this.route.destination.lng = marker.coords.lng;
-		
-		this.newDirection();
+	updateText(form: FormControl, place: string) {
+		form.value = place;
+		this.suggestStream1.next("");
+		this.suggestStream2.next("");
 	}
+
+    movePoint(marker: any, origin: boolean): void {
+		if (origin) {
+			this.route.origin.lat = marker.coords.lat;
+			this.route.origin.lng = marker.coords.lng;
+		} else {
+			this.route.destination.lat = marker.coords.lat;
+			this.route.destination.lng = marker.coords.lng;
+		}
+
+		this.newDirection();
+    }
 
 	newDirection(): void {
 		this.directions.newDirection(this.route);

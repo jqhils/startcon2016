@@ -1,9 +1,18 @@
 <div id="floating-panel">
 	<form [formGroup]="locationForm" (ngSubmit)="submitLocationForm(locationForm.value, locationForm.valid)" novalidate>
-		<input type="text" formControlName="origin" (keyUp)="searchLocation(true)">
-		<input type="text" formControlName="destination" (keyUp)="searchLocation(false)">
+		<input #orig type="text" formControlName="origin" (keyup)="searchLocation(orig.value, true)">
+		<input #dest type="text" formControlName="destination" (keyup)="searchLocation(dest.value, false)">
 		<button type="submit">Submit</button>
 	</form>
+
+	<li *ngFor="let text of suggestions1 | async" (click)="updateText(orig, text)">
+		<a href="#">{{ text }}</a>
+	</li>
+
+	<li *ngFor="let text of suggestions2 | async" (click)="updateText(dest, text)">
+		<a href="#">{{ text }}</a>
+	</li>
+
 	<form [formGroup]="transportForm" (ngSubmit)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
 		<select formControlName="typeA">
 			<option value="DRIVING:">Car</option>
@@ -30,7 +39,7 @@
           [longitude]="route.origin.lng"
           label="Point A"
           [markerDraggable]="true"
-		  (dragEnd)="movePointA($event)">
+		  (dragEnd)="movePoint($event, true)">
 	</sebm-google-map-marker>
 
     <sebm-google-map-marker 
@@ -38,7 +47,7 @@
           [longitude]="route.destination.lng"
           label="Point B"
           [markerDraggable]="true"
-          (dragEnd)="movePointB($event)">
+          (dragEnd)="movePoint($event, false)">
 	</sebm-google-map-marker>
 </sebm-google-map>
 
