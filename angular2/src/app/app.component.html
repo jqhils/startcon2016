@@ -23,7 +23,7 @@
 	[longitude]="151.0953140258789"
 	[zoom]="12">
 
-	<sebm-google-map-directions [origin]="route.origin" [destination]="route.destination"></sebm-google-map-directions>
+	<sebm-google-map-directions [initRoute]="route"></sebm-google-map-directions>
 
     <sebm-google-map-marker 
           [latitude]="route.origin.lat"
@@ -41,3 +41,13 @@
           (dragEnd)="movePointB($event)">
 	</sebm-google-map-marker>
 </sebm-google-map>
+
+<p>Distances</p>
+<div *ngFor="let distance of distances">
+	<label> {{ distance }} </label>
+</div>
+
+<p>Duration</p>
+<div *ngFor="let duration of durations">
+	<label> {{ duration }} </label>
+</div>

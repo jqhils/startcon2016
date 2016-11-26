@@ -21,6 +21,9 @@ export class AppComponent implements OnInit {
     private route: Route;
     private transport: any;
 
+	private durations: number[];
+	private distances: number[];
+
 	@ViewChild(DirectionsMapDirective) directive;
 
     constructor(private mapService: MapService,
@@ -93,6 +96,8 @@ export class AppComponent implements OnInit {
 		this.route.origin.lng = marker.coords.lng;
 
 		this.directive.newDirection(this.route);
+		this.durations = DirectionsMapDirective.durations;
+		this.distances = DirectionsMapDirective.distances;
     }
 
     movePointB(marker: any): void {
@@ -100,5 +105,7 @@ export class AppComponent implements OnInit {
 		this.route.destination.lng = marker.coords.lng;
 
 		this.directive.newDirection(this.route);
+		this.durations = DirectionsMapDirective.durations;
+		this.distances = DirectionsMapDirective.distances;
 	}
 }
