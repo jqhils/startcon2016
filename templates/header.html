@@ -11,23 +11,26 @@
     <!-- Optional Bootstrap theme -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/bootstrap-theme.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/custom.css') }}">
-	
-		<script>
-			var app = angular.module('myApp', []);
-			$interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-			app.controller('myCtrl', function($scope) {
-				$scope.firstname = "John";
-				$scope.lastname = "Doe";
-				$scope.mode1 = "Car";
-				$scope.mode2 = "Bus";
 
-			});
+    <script src="{{ url_for('static', filename='css/bootstrap3/js/jquery-3.1.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/bootstrap3/js/bootstrap.min.js') }}"></script>
 
-			app.controller('myCtrlA', function($scope) {
-				$scope.firstname = "John";
-				$scope.lastname = "Doe";
-			});
-</script>
+    <script>
+    	var app = angular.module('myApp', []);
+    	//$interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+    	app.controller('myCtrl', function($scope) {
+    		$scope.firstname = "John";
+    		$scope.lastname = "Doe";
+    		$scope.mode1 = "Car";
+    		$scope.mode2 = "Bus";
+
+    	});
+
+    	app.controller('myCtrlA', function($scope) {
+    		$scope.firstname = "John";
+    		$scope.lastname = "Doe";
+    	});
+    </script>
     {% endblock %}
 </head>
 	<script>
@@ -54,7 +57,7 @@
         autocomplete = new google.maps.places.Autocomplete(
             /** @type {!HTMLInputElement} */(document.getElementById('autocomplete2')),
             {types: ['geocode']});
-		  
+
 		 autocomplete = new google.maps.places.Autocomplete(
             /** @type {!HTMLInputElement} */(document.getElementById('autocomplete1')),
             {types: ['geocode']});
@@ -99,10 +102,8 @@
             autocomplete.setBounds(circle.getBounds());
           });
         }
-      }	
+      }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2MQBQsRWHr2GfckbagJriR45gMlPdIp8&libraries=places&callback=initAutocomplete"
-        async defer></script>
 <body ng-app="myApp">
     <header>
     </header>

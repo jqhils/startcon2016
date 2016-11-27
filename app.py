@@ -20,10 +20,18 @@ def index():
 
 @app.route("/routesMap", methods=['GET', 'POST'])
 def routeMap():
+    dest = {}
+    dest['from'] = ''
+    dest['to'] = ''
     if (request.method == "POST"):
-        return render_template("routesMap.html")
+        try:
+            dest['from'] = request.form['destFrom']
+            dest['to'] = request.form['destTo']
+        except:
+            pass
+        return render_template("routesMap.html", dest=dest)
     else:
-        return render_template("routesMap.html")
+        return render_template("routesMap.html", dest=dest)
 
 @app.route("/test")
 def mapview():
@@ -56,4 +64,4 @@ def mapview():
     return render_template('example.html', mymap=mymap, sndmap=sndmap)
 
 if (__name__ == "__main__"):
-    app.run(use_reloader=False)
+    app.run(debug=True)

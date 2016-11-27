@@ -3,14 +3,8 @@ export class Location {
     lng: number;
 }
 
-export class TransportType {
-	mode: string;
-	modeTypes: string[];
-}
-
 export class Route {
+    place: string;
     origin: Location;
     destination: Location;
-	typeA: TransportType;
-	typeB: TransportType;
 }
