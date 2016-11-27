@@ -65,11 +65,11 @@
 	</div>
 	<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.4)">
 		<div class="row">
-			<div style="text-align:center;" class="col-xs-6"><h2><span class="label label-default">Bus 5 min</span></h2>
+			<div style="text-align:center;" class="col-xs-6"><h2><span class="label label-default">Car 5 min</span></h2>
 			<div class="row">
 			<br><div style="float:center; padding-left:35%;">
-					<div class="c100 p32 small orange">
-						<span>32%</span>
+					<div class="c100 p0 small orange">
+						<span>0%</span>
 						<div class="slice">
 							<div class="bar"></div>
 							<div class="fill"></div>
@@ -78,14 +78,14 @@
     			</div>
 				<br>
 				</div>
-				<div class="row percentageStat">Less efficient</div>
+				<div class="row percentageStat">More efficient</div>
 			</div>
 		  	<div style="text-align:center; border-left: thin solid #009900;" class="col-xs-5"><h2>
-			  <span class="label label-default">Car 17 min</span></h2>
+			  <span class="label label-default">Bus 17 min</span></h2>
 				<div class="row">
 				<br><div  style="float:center; padding-left:30%;">
-			  		<div class="c100 p12 small green">
-					<span>12%</span>
+			  		<div class="c100 p32 small green">
+					<span>32%</span>
 						<div class="slice">
 							<div class="bar"></div>
 							<div class="fill"></div>
@@ -128,26 +128,47 @@
 		<div class="row">
 				<div style="text-align:center; " class="col-xs-8">
 				<div class="row">
-				<br><div style="text-align:center;">
-					<b>Fuel Consumption: </b>2.1 (L/100km)
-					<br>
-					<b>Energy consumption: </b> 182 (Wh/km)
-					<br>
-					<b>Annual Fuel Cost: </b>2.1 (L/100km)
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+	float: right;
+	padding-left: 20px;
+}
 
-					</div>
-					<br>
-				</div>
-				</div>
-				<div style="text-align:center; border-left: thin solid #009900;" class="col-xs-3">
-					<div class="row">
-					<br><div  style="text-align:center;">
-						 5.1 (L/100km)<br>
-						 5.1 (L/100km)<br>
-						 5.1 (L/100km)<br>
-						</div>
-					</div>
-				</div>
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding-left: 20px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>	
+<table align="right">
+  <tr>
+    <th style="width: 33%"></th>
+    <th style="width: 33%">Car</th>
+    <th style="width: 33%">Bus</th>
+  </tr>
+  <tr>
+    <td>Fuel Consumption</td>
+    <td>2.1 (L/100km)</td>
+    <td>2.5 (L/100km)</td>
+  </tr>
+  <tr>
+    <td>Energy Consumption</td>
+    <td>182 (Wh/km)</td>
+    <td>90 (Wh/km)</td>
+  </tr>
+  <tr>
+    <td>Annual Fuel Cost</td>
+    <td>$509</td>
+    <td>$209</td>
+  </tr>
+  
+</table>
 		</div>
 	<br>
 	</div>
