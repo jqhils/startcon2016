@@ -1,62 +1,176 @@
-<div id="floating-panel">
-	<form [formGroup]="locationForm" (ngSubmit)="submitLocationForm(locationForm.value, locationForm.valid)" novalidate>
-		<input #orig type="text" formControlName="origin" (keyup)="searchLocation(orig.value, true)">
-		<input #dest type="text" formControlName="destination" (keyup)="searchLocation(dest.value, false)">
-		<button type="submit">Submit</button>
-	</form>
-
-	<li *ngFor="let text of suggestions1 | async" (click)="updateText(orig, text)">
-		<a href="#">{{ text }}</a>
-	</li>
-
-	<li *ngFor="let text of suggestions2 | async" (click)="updateText(dest, text)">
-		<a href="#">{{ text }}</a>
-	</li>
-
-	<form [formGroup]="transportForm" (ngSubmit)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
-		<select formControlName="typeA">
-			<option value="DRIVING:">Car</option>
-			<option value="TRANSIT:BUS">Bus</option>
-			<option value="TRANSIT:TRAIN">Train</option>
-		</select>
-		<select formControlName="typeB">
-			<option value="DRIVING:">Car</option>
-			<option value="TRANSIT:BUS">Bus</option>
-			<option value="TRANSIT:TRAIN">Train</option>
-		</select><br/>
-		<button type="submit" [disabled]="!transportForm.valid">Submit</button>
-	</form>
+<div class = "titleBack">
+    <div>Eco Comparison</div>
 </div>
+<div class = "formBack">
+<div class="container-fluid">
+    <div class = "row">
+        <!--<div class = "col-sm-4" style="background-color:lavender;">. col sm 4 </div>
+            <div class = "col-sm-8" style="background-color:blue;">. col sm  8</div>-->
+    </div>
+</div>
+<form class="form-horizontal" [formGroup]="locationForm" (ngSubmit)="submitLocationForm(locationForm.value, locationForm.valid)" novalidate >
+    <div class = "form-group">
+        <label class = "col-xs-2 control-label" for="destFrom"> From:</label>
+        <div class = "col-xs-10">
+            <input #orig type="text" formControlName="origin" (keyup)="searchLocation(orig.value, true)" class = "form-control" id = "destFrom" placeholder="Enter Start Destination">
+            <li *ngFor="let text of suggestions1 | async" (click)="updateText(orig, text)">
+                <a href="#">{{ text }}</a>
+            </li>
+        </div>
+    </div>
+    <div class = "form-group">
+        <label class = "control-label col-xs-2" for="destTo"> To:</label>
+        <div class = "col-xs-10">
+            <input #dest type="text" formControlName="destination" (keyup)="searchLocation(dest.value, false)" class = "form-control" id = "destFrom" placeholder="Enter Start Destination">
+            <li *ngFor="let text of suggestions2 | async" (click)="updateText(dest, text)">
+                <a href="#">{{ text }}</a>
+            </li>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class = "col-xs-12">
+            <button type="submit" class="btn btn-default" style="float: right;" id="findRoute">Find Routes</button>
+        </div>
+    </div>
+</form>
+</div>
+
 <sebm-google-map
-	[latitude]="-33.81224331648925"
-	[longitude]="151.0953140258789"
-	[zoom]="12">
+    [latitude]="-33.81224331648925"
+    [longitude]="151.0953140258789"
+    [zoom]="12">
 
-	<sebm-google-map-directions [initRoute]="route"></sebm-google-map-directions>
-
-    <sebm-google-map-marker 
-          [latitude]="route.origin.lat"
-          [longitude]="route.origin.lng"
-          label="Point A"
-          [markerDraggable]="true"
-		  (dragEnd)="movePoint($event, true)">
-	</sebm-google-map-marker>
+    <sebm-google-map-directions [initRoute]="route"></sebm-google-map-directions>
 
     <sebm-google-map-marker 
-          [latitude]="route.destination.lat"
-          [longitude]="route.destination.lng"
-          label="Point B"
-          [markerDraggable]="true"
-          (dragEnd)="movePoint($event, false)">
-	</sebm-google-map-marker>
+        [latitude]="route.origin.lat"
+        [longitude]="route.origin.lng"
+        label="Point A"
+        [markerDraggable]="true"
+        (dragEnd)="movePoint($event, true)">
+    </sebm-google-map-marker>
+
+    <sebm-google-map-marker 
+        [latitude]="route.destination.lat"
+        [longitude]="route.destination.lng"
+        label="Point B"
+        [markerDraggable]="true"
+        (dragEnd)="movePoint($event, false)">
+    </sebm-google-map-marker>
 </sebm-google-map>
 
-<p>Distances</p>
-<div *ngFor="let distance of distances">
-	<label> {{ distance }} </label>
-</div>
+<form class="form-horizontal" [formGroup]="transportForm" (ngChange)="submitTransportForm(transportForm.value, transportForm.valid)" novalidate>
+    <select class="form-control" style="width:45%; display:inline-block;" id="typea">
+        <option value="DRIVING:">Car</option>
+        <option value="TRANSIT:BUS">Bus</option>
+        <option value="TRANSIT:TRAIN">Train</option>
+    </select>
+    <select class="form-control" style="width:45%; display:inline-block;" id="typeb">
+        <option value="DRIVING:">Car</option>
+        <option value="TRANSIT:BUS">Bus</option>
+        <option value="TRANSIT:TRAIN">Train</option>
+    </select>
+</form>
 
-<p>Duration</p>
-<div *ngFor="let duration of durations">
-	<label> {{ duration }} </label>
+<div class="selectModeTitle">
+    Sustainability
+</div>
+<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.4)">
+    <div class="row">
+        <div style="text-align:center;" class="col-xs-6">
+            <h2>
+                <!-- TODO Type from dropdown --> 
+                <!--<span class="label label-default">Bus 
+                    <span *ngIf="~~(durations[0] / 60)">{{ ~~(durations[0] / 60) }} </span> 
+                    hour {{ durations[0] % 60 }} mins
+                </span>-->
+            </h2>
+            <div class="row">
+                <div style="float:center; padding-left:35%;">
+                    <div class="c100 p32 small orange">
+                        <span>32%</span>
+                        <div class="slice">
+                            <div class="bar"></div>
+                            <div class="fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row percentageStat">Less efficient</div>
+        </div>
+        <div style="text-align:center; border-left: thin solid #009900;" class="col-xs-5">
+            <h2>
+                <!-- TODO Type from dropdown --> 
+                <!--<span class="label label-default">Car 
+                    <span *ngIf="~~(durations[1] / 60)">{{ ~~(durations[1] / 60) }} </span> 
+                    hour {{ durations[1] % 60 }} mins
+                </span>-->
+            </h2>
+            <div class="row">
+                <div style="float:center; padding-left:30%;">
+                    <div class="c100 p12 small green">
+                        <span>12%</span>
+                        <div class="slice">
+                            <div class="bar"></div>
+                            <div class="fill"></div>
+                        </div>
+                    </div>
+                </div>	
+            </div>
+            <div class="row percentageStat">More efficient</div>
+        </div>
+    </div>
+    </div>
+<div style="text-align:center;background-color: rgba(0, 0, 0, 0.2)">
+    <h2><span class="label label-success">Trees to Plant</span></h2>
+</div>
+<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.2)">
+    <div class="row">
+        <div style="text-align:center;" class="col-xs-6">
+            <div class="row">
+                <div style="float:center; padding-left:5%;">
+                    <span class="glyphicon glyphicon-tree-conifer"></span>
+                    <span class="glyphicon glyphicon-tree-conifer"></span>
+                    <span class="glyphicon glyphicon-tree-conifer"></span>
+                    <span class="glyphicon glyphicon-tree-conifer"></span>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center; border-left: thin solid #009900;" class="col-xs-5">
+            <div class="row">
+                <div style="float:center; padding-left:30%;">
+                    <span class="glyphicon glyphicon-tree-conifer"></span>
+                </div>	
+            </div>
+        </div>
+    </div>
+</div>
+<div style="text-align:center;background-color: rgba(0, 0, 0, 0.4)">
+    <h2><span class="label label-danger">Emmissions Use</span></h2>
+</div>
+<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.4)">
+    <div class="row">
+        <div style="text-align:center; " class="col-xs-8">
+            <div class="row"><br>
+                <div style="text-align:center;">
+                    <b>Fuel Consumption: </b>2.1 (L/100km)
+                    <br>
+                    <b>Energy consumption: </b> 182 (Wh/km)
+                    <br>
+                    <b>Annual Fuel Cost: </b>2.1 (L/100km)
+                </div>
+                <br>
+            </div>
+        </div>
+        <div style="text-align:center; border-left: thin solid #009900;" class="col-xs-3">
+            <div class="row"><br>
+                <div  style="text-align:center;">
+                    5.1 (L/100km)<br>
+                    5.1 (L/100km)<br>
+                    5.1 (L/100km)<br>
+                </div>	
+            </div>
+        </div>
+    </div>
+    <br>
 </div>

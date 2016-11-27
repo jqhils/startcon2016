@@ -9,9 +9,9 @@ import { MapService } from './map.service';
 import { Location, TransportType, Route } from './location';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
 })
 
 export class AppComponent implements OnInit, OnDestroy {
@@ -23,15 +23,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private route: Route;
 
-	private suggestStream1: Subject<string>;
-	private suggestStream2: Subject<string>;
-	private suggestions1: Observable<string[]>;
-	private suggestions2: Observable<string[]>;
+    private suggestStream1: Subject<string>;
+    private suggestStream2: Subject<string>;
+    private suggestions1: Observable<string[]>;
+    private suggestions2: Observable<string[]>;
 
-	private durations: number[];
-	private distances: number[];
+    private durations: number[];
+    private distances: number[];
 
-	@ViewChild(DirectionsMapDirective) directions;
+    @ViewChild(DirectionsMapDirective) directions;
 
     constructor(private mapService: MapService,
                 private formBuilder: FormBuilder) {
@@ -45,26 +45,26 @@ export class AppComponent implements OnInit, OnDestroy {
             lng: 151.06613159179688
         }
 
-		let typeA: TransportType = {
-			mode: "DRIVING",
-			modeTypes: []
-		}
+        let typeA: TransportType = {
+            mode: "DRIVING",
+            modeTypes: []
+        }
 
-		let typeB: TransportType = {
-			mode: "TRANSIT",
-			modeTypes: ["BUS"]
-		}
+        let typeB: TransportType = {
+            mode: "TRANSIT",
+            modeTypes: ["BUS"]
+        }
 
         this.route = {
             origin: this.origin,
             destination: this.destination,
-			typeA: typeA,
-			typeB: typeB,
+            typeA: typeA,
+            typeB: typeB,
         }
 
-		this.suggestStream1 = new Subject<string>();
-		this.suggestStream2 = new Subject<string>();
-	}
+        this.suggestStream1 = new Subject<string>();
+        this.suggestStream2 = new Subject<string>();
+    }
 
     ngOnInit() {
         this.locationForm = this.formBuilder.group({
@@ -77,46 +77,46 @@ export class AppComponent implements OnInit, OnDestroy {
             typeB: ["", Validators.required],
         });
 
-		this.suggestions1 = this.suggestStream1
-			.debounceTime(300)
-			.distinctUntilChanged()
-			.switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
-			.catch(error => {
-				console.log(error)
-				return Observable.of<string[]>([])
-			});
+        this.suggestions1 = this.suggestStream1
+        .debounceTime(300)
+        .distinctUntilChanged()
+        .switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
+        .catch(error => {
+            console.log(error)
+            return Observable.of<string[]>([])
+        });
 
-		this.suggestions2 = this.suggestStream2
-			.debounceTime(300)
-			.distinctUntilChanged()
-			.switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
-			.catch(error => {
-				console.log(error)
-				return Observable.of<string[]>([])
-			});
+        this.suggestions2 = this.suggestStream2
+        .debounceTime(300)
+        .distinctUntilChanged()
+        .switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
+        .catch(error => {
+            console.log(error)
+            return Observable.of<string[]>([])
+        });
     }
 
-	ngOnDestroy() {
-		this.suggestStream1.unsubscribe();
-		this.suggestStream2.unsubscribe();
-	}
+    ngOnDestroy() {
+        this.suggestStream1.unsubscribe();
+        this.suggestStream2.unsubscribe();
+    }
 
     submitLocationForm(form: any, valid: boolean): void {
         if (!valid) return;
 
         this.mapService.getLatAndLng(form.origin).subscribe(
             (origin) => {
-				this.route.origin = origin,
-				this.newDirection()
-			},
+                this.route.origin = origin,
+                    this.newDirection()
+            },
             () => console.log("Error"),
             () => console.log("Done"));
 
         this.mapService.getLatAndLng(form.destination).subscribe(
             (destination) => {
-				this.route.destination = destination
-				this.newDirection();
-			},
+                this.route.destination = destination
+                this.newDirection();
+            },
             () => console.log("Error"),
             () => console.log("Done"));
     }
@@ -124,48 +124,48 @@ export class AppComponent implements OnInit, OnDestroy {
     submitTransportForm(form: any, valid: boolean): void {
         if (!valid) return;
 
-		let a = form.typeA.split(":");
-		let b = form.typeB.split(":");
+        let a = form.typeA.split(":");
+        let b = form.typeB.split(":");
 
-		this.route.typeA = {
-			mode: a[0],
-			modeTypes: a[1] ? [a[1]] : []
-		}
+        this.route.typeA = {
+          mode: a[0],
+          modeTypes: a[1] ? [a[1]] : []
+        }
 
-		this.route.typeB = {
-			mode: b[0],
-			modeTypes: b[1] ? [b[1]] : []
-		}
+        this.route.typeB = {
+          mode: b[0],
+          modeTypes: b[1] ? [b[1]] : []
+        }
 
-		this.newDirection();
+        this.newDirection();
     }
 
     searchLocation(place: string, origin: boolean): void {
-		if (origin) this.suggestStream1.next(place);
-		else this.suggestStream2.next(place);
+        if (origin) this.suggestStream1.next(place);
+        else this.suggestStream2.next(place);
     }
 
-	updateText(form: FormControl, place: string) {
-		form.value = place;
-		this.suggestStream1.next("");
-		this.suggestStream2.next("");
-	}
+    updateText(form: FormControl, place: string) {
+        form.value = place;
+        this.suggestStream1.next("");
+        this.suggestStream2.next("");
+    }
 
     movePoint(marker: any, origin: boolean): void {
-		if (origin) {
-			this.route.origin.lat = marker.coords.lat;
-			this.route.origin.lng = marker.coords.lng;
-		} else {
-			this.route.destination.lat = marker.coords.lat;
-			this.route.destination.lng = marker.coords.lng;
-		}
+        if (origin) {
+            this.route.origin.lat = marker.coords.lat;
+            this.route.origin.lng = marker.coords.lng;
+        } else {
+            this.route.destination.lat = marker.coords.lat;
+            this.route.destination.lng = marker.coords.lng;
+        }
 
-		this.newDirection();
+        this.newDirection();
     }
 
-	newDirection(): void {
-		this.directions.newDirection(this.route);
-		this.durations = DirectionsMapDirective.durations;
-		this.distances = DirectionsMapDirective.distances;
-	}
+    newDirection(): void {
+        this.directions.newDirection(this.route);
+        this.durations = DirectionsMapDirective.durations;
+        this.distances = DirectionsMapDirective.distances;
+    }
 }

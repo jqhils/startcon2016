@@ -19,7 +19,7 @@ import { DirectionsMapDirective } from './directionsmap.directive';
         ReactiveFormsModule,
         HttpModule,
         AgmCoreModule.forRoot({
-            apiKey: 'AIzaSyBgauW3FJMZnU45GYXaqCT6GLBqkbOQm8s'
+            apiKey: 'AIzaSyC2MQBQsRWHr2GfckbagJriR45gMlPdIp8'
         })
     ],
     providers: [ MapService ],
