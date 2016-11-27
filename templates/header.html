@@ -11,6 +11,10 @@
     <!-- Optional Bootstrap theme -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/bootstrap-theme.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/custom.css') }}">
+
+    <script src="{{ url_for('static', filename='css/bootstrap3/js/jquery-3.1.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/bootstrap3/js/bootstrap.min.js') }}"></script>
+
     <script>
     	var app = angular.module('myApp', []);
     	//$interpolateProvider.startSymbol('{[{').endSymbol('}]}');
@@ -107,9 +111,5 @@
     {% endblock %}
     <footer>
     </footer>
-
-    <script src="{{ url_for('static', filename='css/bootstrap3/js/jquery-3.1.0.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='css/bootstrap3/js/bootstrap.min.js') }}"></script>
-
 </body>
 </html>
