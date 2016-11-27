@@ -1,5 +1,7 @@
 <!doctype html>
-<html>
+<html lang="en">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
 <head>
     {% block head %}
 	<!--<tite>TEST BOOTSTRAP TEMPLATE</tite>-->
@@ -7,9 +9,26 @@
     <!-- Optional Bootstrap theme -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/bootstrap-theme.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap3/css/custom.css') }}">
+	
+		<script>
+			var app = angular.module('myApp', []);
+			$interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+			app.controller('myCtrl', function($scope) {
+				$scope.firstname = "John";
+				$scope.lastname = "Doe";
+				$scope.mode1 = "Car";
+				$scope.mode2 = "Bus";
+
+			});
+
+			app.controller('myCtrlA', function($scope) {
+				$scope.firstname = "John";
+				$scope.lastname = "Doe";
+			});
+</script>
     {% endblock %}
 </head>
-<body>
+<body ng-app="myApp">
     <header>
     </header>
     {% block content%}
