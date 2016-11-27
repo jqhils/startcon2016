@@ -12,19 +12,13 @@
     <div class = "form-group">
         <label class = "col-xs-2 control-label" for="destFrom"> From:</label>
         <div class = "col-xs-10">
-            <input #orig type="text" formControlName="origin" (keyup)="searchLocation(orig.value, true)" class = "form-control" id = "destFrom" placeholder="Enter Start Destination">
-            <li *ngFor="let text of suggestions1 | async" (click)="updateText(orig, text)">
-                <a href="#">{{ text }}</a>
-            </li>
+			<input #orig type="text" class="form-control" placeholder="Enter Start Destination" formControlName="destination" (setAddress)="getAddress($event, true)">
         </div>
     </div>
     <div class = "form-group">
         <label class = "control-label col-xs-2" for="destTo"> To:</label>
         <div class = "col-xs-10">
-            <input #dest type="text" formControlName="destination" (keyup)="searchLocation(dest.value, false)" class = "form-control" id = "destFrom" placeholder="Enter Start Destination">
-            <li *ngFor="let text of suggestions2 | async" (click)="updateText(dest, text)">
-                <a href="#">{{ text }}</a>
-            </li>
+			<input #dest type="text" class="form-control" placeholder="Enter End Destination" formControlName="destination" (setAddress)="getAddress($event, false)">
         </div>
     </div>
     <div class="form-group">
@@ -40,7 +34,9 @@
     [longitude]="151.0953140258789"
     [zoom]="12">
 
-    <sebm-google-map-directions [initRoute]="route"></sebm-google-map-directions>
+    <google-map-directions [initRoute]="route"></google-map-directions>
+	<google-autocomplete [element]="orig" [origin]="true" [completeFunction]="this"></google-autocomplete>
+	<google-autocomplete [element]="dest" [origin]="false" [completeFunction]="this"></google-autocomplete>
 
     <sebm-google-map-marker 
         [latitude]="route.origin.lat"

@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Observable, Subject } from 'rxjs';
@@ -11,10 +11,10 @@ import { Location, TransportType, Route } from './location';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
+    styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
     private locationForm: FormGroup;
     private transportForm: FormGroup;
 
@@ -23,18 +23,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private route: Route;
 
-    private suggestStream1: Subject<string>;
-    private suggestStream2: Subject<string>;
-    private suggestions1: Observable<string[]>;
-    private suggestions2: Observable<string[]>;
-
     private durations: number[];
     private distances: number[];
 
+	private address: Object;
+
     @ViewChild(DirectionsMapDirective) directions;
 
-    constructor(private mapService: MapService,
-                private formBuilder: FormBuilder) {
+    constructor(private formBuilder: FormBuilder) {
         this.origin = {
             lat: -33.77971806012011,
             lng: 151.1334228515625
@@ -61,9 +57,6 @@ export class AppComponent implements OnInit, OnDestroy {
             typeA: typeA,
             typeB: typeB,
         }
-
-        this.suggestStream1 = new Subject<string>();
-        this.suggestStream2 = new Subject<string>();
     }
 
     ngOnInit() {
@@ -76,49 +69,12 @@ export class AppComponent implements OnInit, OnDestroy {
             typeA: ["", Validators.required],
             typeB: ["", Validators.required],
         });
-
-        this.suggestions1 = this.suggestStream1
-        .debounceTime(300)
-        .distinctUntilChanged()
-        .switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
-        .catch(error => {
-            console.log(error)
-            return Observable.of<string[]>([])
-        });
-
-        this.suggestions2 = this.suggestStream2
-        .debounceTime(300)
-        .distinctUntilChanged()
-        .switchMap(term => term ? this.mapService.getSuggestion(term) : Observable.of<string[]>([]))
-        .catch(error => {
-            console.log(error)
-            return Observable.of<string[]>([])
-        });
-    }
-
-    ngOnDestroy() {
-        this.suggestStream1.unsubscribe();
-        this.suggestStream2.unsubscribe();
     }
 
     submitLocationForm(form: any, valid: boolean): void {
         if (!valid) return;
 
-        this.mapService.getLatAndLng(form.origin).subscribe(
-            (origin) => {
-                this.route.origin = origin,
-                    this.newDirection()
-            },
-            () => console.log("Error"),
-            () => console.log("Done"));
-
-        this.mapService.getLatAndLng(form.destination).subscribe(
-            (destination) => {
-                this.route.destination = destination
-                this.newDirection();
-            },
-            () => console.log("Error"),
-            () => console.log("Done"));
+		this.newDirection();
     }
 
     submitTransportForm(form: any, valid: boolean): void {
@@ -140,24 +96,36 @@ export class AppComponent implements OnInit, OnDestroy {
         this.newDirection();
     }
 
-    searchLocation(place: string, origin: boolean): void {
-        if (origin) this.suggestStream1.next(place);
-        else this.suggestStream2.next(place);
-    }
+	getAddress(autocomplete: any, origin: boolean): void {
+		let place = autocomplete.getPlace();
+		let coordinate = place.geometry.location;
 
-    updateText(form: FormControl, place: string) {
-        form.value = place;
-        this.suggestStream1.next("");
-        this.suggestStream2.next("");
-    }
+		if (origin) {
+			this.route.origin = {
+				lat: coordinate.lat(),
+				lng: coordinate.lng()
+			}
+		} else {
+			this.route.destination = {
+				lat: coordinate.lat(),
+				lng: coordinate.lng()
+			}
+		}
+
+        this.newDirection();
+	}
 
     movePoint(marker: any, origin: boolean): void {
         if (origin) {
-            this.route.origin.lat = marker.coords.lat;
-            this.route.origin.lng = marker.coords.lng;
+            this.route.origin = {
+				lat: marker.coords.lat,
+				lng: marker.coords.lng
+			}
         } else {
-            this.route.destination.lat = marker.coords.lat;
-            this.route.destination.lng = marker.coords.lng;
+            this.route.destination = {
+				lat: marker.coords.lat,
+				lng: marker.coords.lng
+			}
         }
 
         this.newDirection();

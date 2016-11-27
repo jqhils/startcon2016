@@ -1,12 +1,13 @@
-import { GoogleMapsAPIWrapper } from 'angular2-google-maps/core/services/google-maps-api-wrapper';
 import { Directive, Input} from '@angular/core';
+
+import { GoogleMapsAPIWrapper } from 'angular2-google-maps/core/services/google-maps-api-wrapper';
 
 import { Location, Route } from './location';
 
 declare var google: any;
 
 @Directive({
-    selector: 'sebm-google-map-directions'
+    selector: 'google-map-directions'
 })
 
 export class DirectionsMapDirective {
