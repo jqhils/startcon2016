@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import 'rxjs/Rx';
 
 import { DirectionsMapDirective } from './directionsmap.directive';
-import { Location, TransportType, Route } from './location';
+import { Location, TransportType, Route, StringResults } from './location';
 
 @Component({
     selector: 'app-root',
@@ -22,8 +22,7 @@ export class AppComponent implements OnInit {
 
     private route: Route;
 
-    private transportTypes: string[];
-    //private distances: string[];
+    private results: StringResults[];
 
     @ViewChild(DirectionsMapDirective) directions;
 
@@ -51,11 +50,10 @@ export class AppComponent implements OnInit {
         this.route = {
             origin: this.origin,
             destination: this.destination,
-            typeA: typeA,
-            typeB: typeB,
+            types: [ typeA, typeB ],
         }
 
-        this.transportTypes = [];
+		this.results = [];
     }
 
     ngOnInit() {
@@ -82,12 +80,12 @@ export class AppComponent implements OnInit {
         let a = form.typeA.split(":");
         let b = form.typeB.split(":");
 
-        this.route.typeA = {
+        this.route.types[0] = {
             mode: a[0],
             modeTypes: a[1] ? [a[1]] : []
         }
 
-        this.route.typeB = {
+        this.route.types[1] = {
             mode: b[0],
             modeTypes: b[1] ? [b[1]] : []
         }
@@ -133,24 +131,38 @@ export class AppComponent implements OnInit {
     newDirection(): void {
         this.directions.newDirection(this.route);
 
-        //TODO Scroll down to page 
-        let hour = Math.floor(this.directions.durations[0] / 60);
-        let minute = this.directions.durations[0] % 60;
-        if (this.route.typeA.mode === "DRIVING") {
-            this.transportTypes[0] = "Car";
-        } else {
-            let modeType = this.route.typeA.modeTypes[0];
-            this.transportTypes[0] = this.toTitleCase(modeType)
-        }
+		this.results = [];
 
-        hour = Math.floor(this.directions.durations[1] / 60);
-        minute = this.directions.durations[1] % 60;
-        if (this.route.typeB.mode === "DRIVING") {
-            this.transportTypes[1] = "Car";
-        } else {
-            let modeType = this.route.typeB.modeTypes[0];
-            this.transportTypes[1] = this.toTitleCase(modeType)
-        }
+		//TODO Scroll down to page 
+		for (let i = 0; i < 2; i++) {
+			let mode = "";
+			if (this.route.types[i].mode === "DRIVING") {
+				mode = "Car";
+			} else {
+				let modeType = this.route.types[i].modeTypes[0];
+				mode = this.toTitleCase(modeType)
+			}
+			let distance = this.directions.distances[i];
+			let duration = this.directions.durations[i];
+
+			//TODO Calculate efficiency
+			let efficiency = 25;//Math.round(duration.value / distance.value * 100) * 100;
+
+			this.results[i] = {
+				mode: mode,
+				distance: distance.text,
+				duration: duration.text,
+				efficiency: efficiency,
+				moreEfficient: false
+			}
+
+			if (this.results[1] && efficiency > this.results[i-1].efficiency) {
+				for (let result of this.results) {
+					result.moreEfficient = false;
+				}
+				this.results[i].moreEfficient = true;
+			}
+		}
     }
 
     private toTitleCase(str: string): string

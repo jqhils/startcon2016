@@ -11,6 +11,13 @@ export class TransportType {
 export class Route {
     origin: Location;
     destination: Location;
-	typeA: TransportType;
-	typeB: TransportType;
+	types: TransportType[];
+}
+
+export class StringResults {
+	mode: string;
+	distance: string;
+	duration: string;
+	efficiency: number;
+	moreEfficient: boolean;
 }

@@ -15,13 +15,12 @@ export class DirectionsMapDirective {
     @Input() initRoute: Route;
 
     directionDisplays: any;
-    durations: string[];
-    distances: number[];
+    durations: any[];
+    distances: any[];
 
     constructor (private gmapsApi: GoogleMapsAPIWrapper) {}
 
     ngOnInit(){
-        this.directionDisplays = [];
         this.durations = [];
         this.distances = [];
 
@@ -33,18 +32,13 @@ export class DirectionsMapDirective {
             let directionsService = new google.maps.DirectionsService;
             let directionDisplays = this.getDisplays(map);
 
-            let distances = this.distances;
-            let durations = this.durations;
-            distances.length = 0;
-            durations.length = 0;
-
             let options = {
                 origin: {lat: route.origin.lat, lng: route.origin.lng},
                 destination: {lat: route.destination.lat, lng: route.destination.lng},
                 waypoints: [],
                 optimizeWaypoints: true,
-                travelMode: route.typeA.mode,
-                transitOptions: { modes: route.typeA.modeTypes }
+                travelMode: route.types[0].mode,
+                transitOptions: { modes: route.types[0].modeTypes }
             }
 
             //TODO Callback functions for durations and distances
@@ -52,12 +46,12 @@ export class DirectionsMapDirective {
                 if (status === 'OK') {
                     let leg = direction.routes[0].legs[0];
                     if (origin) {
-                        distances[0] = leg.distance.value;
-                        durations[0] = leg.duration.text;
+                        this.distances[0] = leg.distance;
+                        this.durations[0] = leg.duration;
                         directionDisplays[0].setDirections(direction);
                     } else {
-                        distances[1] = leg.distance.value;
-                        durations[1] = leg.duration.text;
+                        this.distances[1] = leg.distance;
+                        this.durations[1] = leg.duration;
                         directionDisplays[1].setDirections(direction);
                     }
                 } else {
@@ -69,19 +63,20 @@ export class DirectionsMapDirective {
 
             options.origin = { lat: route.origin.lat, lng: route.origin.lng };
             options.destination = { lat: route.destination.lat, lng: route.destination.lng };
-            options.travelMode = route.typeB.mode;
-            options.transitOptions = { modes: route.typeB.modeTypes };
+            options.travelMode = route.types[1].mode;
+            options.transitOptions = { modes: route.types[1].modeTypes };
 
             directionsService.route(options, (directions, status) => { calculate(directions, status, false) });
         });
     }
 
     private getDisplays(map: any): any {
-        if (this.directionDisplays.length <= 0) {
+        if (!this.directionDisplays) {
+			this.directionDisplays = [];
             for (let i = 0; i < 2; i++) {
                 let display = new google.maps.DirectionsRenderer;
                 display.setMap(map);
-                this.directionDisplays[i] = display;
+                this.directionDisplays.push(display);
             }
         }
         return this.directionDisplays;
