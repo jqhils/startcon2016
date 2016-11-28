@@ -20,4 +20,5 @@ export class StringResults {
 	duration: string;
 	efficiency: number;
 	moreEfficient: boolean;
+	trees: number;
 }

@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import 'rxjs/Rx';
 
 import { DirectionsMapDirective } from './directionsmap.directive';
+import { FuelService } from './fuel.service';
 import { Location, TransportType, Route, StringResults } from './location';
 
 @Component({
@@ -26,7 +27,8 @@ export class AppComponent implements OnInit {
 
     @ViewChild(DirectionsMapDirective) directions;
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(private fuelService: FuelService,
+				private formBuilder: FormBuilder) {
         this.origin = {
             lat: -33.77971806012011,
             lng: 151.1334228515625
@@ -145,28 +147,41 @@ export class AppComponent implements OnInit {
 			let distance = this.directions.distances[i];
 			let duration = this.directions.durations[i];
 
-			//TODO Calculate efficiency
-			let efficiency = 25;//Math.round(duration.value / distance.value * 100) * 100;
+			this.fuelService.getFuelEfficiency(mode).then((fuelEfficiency) => {
+				//TODO Calculate efficiency
+				let efficiency = Math.floor(Math.random() * 100);
 
-			this.results[i] = {
-				mode: mode,
-				distance: distance.text,
-				duration: duration.text,
-				efficiency: efficiency,
-				moreEfficient: false
-			}
-
-			if (this.results[1] && efficiency > this.results[i-1].efficiency) {
-				for (let result of this.results) {
-					result.moreEfficient = false;
+				this.results[i] = {
+					mode: mode,
+					distance: distance.text,
+					duration: duration.text,
+					efficiency: efficiency,
+					moreEfficient: true,
+					trees: Math.floor(Math.random() * 10) //TODO Obviously this shouldn't be random
 				}
-				this.results[i].moreEfficient = true;
-			}
+
+				if (this.results[1] && efficiency > this.results[i-1].efficiency) {
+					for (let result of this.results) {
+						result.moreEfficient = false;
+					}
+					this.results[i].moreEfficient = true;
+				} else {
+					this.results[i].moreEfficient = false;
+				}
+			});
 		}
     }
 
     private toTitleCase(str: string): string
     {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        return str.replace(/\w\S*/g, txt => { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
     }
+
+	private createRange(num): number[] {
+		var items: number[] = [];
+		for(var i = 0; i < num; i++){
+			items.push(i);
+		}
+		return items;
+	}
 }

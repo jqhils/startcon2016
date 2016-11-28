@@ -8,6 +8,7 @@ import { GoogleMapsAPIWrapper } from 'angular2-google-maps/core/services/google-
 
 import { DirectionsMapDirective } from './directionsmap.directive';
 import { AutoCompleteDirective } from './autocomplete.directive';
+import { FuelService } from './fuel.service';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { AppComponent } from './app.component';
 			libraries: ['places'],
         })
     ],
+	providers: [ FuelService ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }
