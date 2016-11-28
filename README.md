@@ -1,7 +1,7 @@
 # startcon2016
 Drawing an energy consumption comparison between different transport modes from point A to point B by leveraging public transport and detailed car model-specific data.
 
-Set-up Instructions
+## Set-up Instructions
 
 1. Run 'virtualenv env'
 
