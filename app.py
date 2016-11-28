@@ -1,6 +1,6 @@
 from flask import (Flask, render_template, request, redirect, url_for)
-from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
+# from flask_googlemaps import GoogleMaps
+# from flask_googlemaps import Map
 
 app = Flask(__name__)
 app.debug = True
