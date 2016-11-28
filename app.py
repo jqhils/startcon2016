@@ -1,14 +1,12 @@
 from flask import (Flask, render_template, request, redirect, url_for)
-from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
+# from flask_googlemaps import GoogleMaps
+# from flask_googlemaps import Map
 
 app = Flask(__name__)
 app.debug = True
-# you can set key as config
-app.config['GOOGLEMAPS_KEY'] = "AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw"
-# Initialize the extension
-GoogleMaps(app)
-# you can also pass the key here if you prefer
+
+#app.config['GOOGLEMAPS_KEY'] = "AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw"
+# GoogleMaps(app)
 
 @app.route("/google2e4c61498b4fdd7f.html")
 def googlecheck():
@@ -33,6 +31,7 @@ def routeMap():
     else:
         return render_template("routesMap.html", dest=dest)
 
+'''
 @app.route("/test")
 def mapview():
     # creating a map in the view
@@ -62,6 +61,7 @@ def mapview():
         ]
     )
     return render_template('example.html', mymap=mymap, sndmap=sndmap)
+'''
 
 if (__name__ == "__main__"):
     app.run(debug=True)
