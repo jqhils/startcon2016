@@ -2,19 +2,23 @@
  * element that contains the map. */
 .sebm-google-map-container {
     height: 500px;
-    width: 100%;
+    width: 80%;
 }
 
-#floating-panel {
-    position: absolute;
-    top: 10px;
-    left: 25%;
-    z-index: 5;
-    background-color: #fff;
-    padding: 5px;
-    border: 1px solid #999;
+input.form-control {
+    width: 80%;
+}
+
+select.form-control {
+    display: inline-block;
+    width: 35%;
+}
+
+.form-horizontal {
     text-align: center;
-    font-family: 'Roboto','sans-serif';
-    line-height: 30px;
-    padding-left: 10px;
+}
+
+#findRoute {
+    display: block;
+    margin: auto;
 }

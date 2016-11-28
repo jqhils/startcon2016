@@ -3,100 +3,88 @@ import { Directive, Input} from '@angular/core';
 import { GoogleMapsAPIWrapper } from 'angular2-google-maps/core/services/google-maps-api-wrapper';
 
 import { Location, Route } from './location';
+import { Observable } from "rxjs/Observable";
 
 declare var google: any;
 
 @Directive({
-    selector: 'google-map-directions'
+    selector: 'google-map-directions',
 })
 
 export class DirectionsMapDirective {
     @Input() initRoute: Route;
 
-    static directionDisplays: any;
-    static durations: number[];
-    static distances: number[];
+    directionDisplays: any;
+    durations: string[];
+    distances: number[];
 
     constructor (private gmapsApi: GoogleMapsAPIWrapper) {}
 
     ngOnInit(){
-        DirectionsMapDirective.directionDisplays = [];
-        DirectionsMapDirective.durations = [];
-        DirectionsMapDirective.distances = [];
+        this.directionDisplays = [];
+        this.durations = [];
+        this.distances = [];
 
         this.newDirection(this.initRoute);
-    }
-
-    //TODO Way to make this non-static?
-    static getDisplays(map: any): any {
-        if (DirectionsMapDirective.directionDisplays.length <= 0) {
-            for (let i = 0; i < 2; i++) {
-                let display = new google.maps.DirectionsRenderer;
-                display.setMap(map);
-                DirectionsMapDirective.directionDisplays[i] = display;
-            }
-        }
-        return DirectionsMapDirective.directionDisplays;
     }
 
     newDirection(route: Route) {
         this.gmapsApi.getNativeMap().then(map => {
             let directionsService = new google.maps.DirectionsService;
-            let directionDisplays = DirectionsMapDirective.getDisplays(map);
+            let directionDisplays = this.getDisplays(map);
 
-            let distances = DirectionsMapDirective.distances;
-            let durations = DirectionsMapDirective.durations;
+            let distances = this.distances;
+            let durations = this.durations;
             distances.length = 0;
             durations.length = 0;
 
-            //TODO Callback functions for durations and distances
-            directionsService.route({
+            let options = {
                 origin: {lat: route.origin.lat, lng: route.origin.lng},
                 destination: {lat: route.destination.lat, lng: route.destination.lng},
                 waypoints: [],
                 optimizeWaypoints: true,
                 travelMode: route.typeA.mode,
                 transitOptions: { modes: route.typeA.modeTypes }
-            }, function(direction, status) {
-                if (status === 'OK') {
-                    let totalDistance = 0;
-                    let totalDuration = 0;
-                    let legs = direction.routes[0].legs;
-                    for(let i = 0; i < legs.length; i++) {
-                        totalDistance += legs[i].distance.value;
-                        totalDuration += legs[i].duration.value;
-                    }
-                    distances.push(totalDistance);
-                    durations.push(totalDuration);
-                    directionDisplays[0].setDirections(direction);
-                } else {
-                    console.log('Directions request failed due to ' + status);
-                }
-            });
+            }
 
-            directionsService.route({
-                origin: {lat: route.origin.lat, lng: route.origin.lng},
-                destination: {lat: route.destination.lat, lng: route.destination.lng},
-                waypoints: [],
-                optimizeWaypoints: true,
-                travelMode: route.typeB.mode,
-                transitOptions: { modes: route.typeB.modeTypes }
-            }, function(direction, status) {
+            //TODO Callback functions for durations and distances
+            const calculate = (direction, status, origin) => {
                 if (status === 'OK') {
-                    let totalDistance = 0;
-                    let totalDuration = 0;
-                    let legs = direction.routes[0].legs;
-                    for(let i = 0; i < legs.length; i++) {
-                        totalDistance += legs[i].distance.value;
-                        totalDuration += legs[i].duration.value;
+                    let leg = direction.routes[0].legs[0];
+                    if (origin) {
+                        distances[0] = leg.distance.value;
+                        durations[0] = leg.duration.text;
+                        directionDisplays[0].setDirections(direction);
+                    } else {
+                        distances[1] = leg.distance.value;
+                        durations[1] = leg.duration.text;
+                        directionDisplays[1].setDirections(direction);
                     }
-                    distances.push(totalDistance);
-                    durations.push(totalDuration);
-                    directionDisplays[1].setDirections(direction);
                 } else {
                     console.log('Directions request failed due to ' + status);
                 }
-            });
+            }
+
+            directionsService.route(options, (directions, status) => { calculate(directions, status, true) });
+
+            options.origin = { lat: route.origin.lat, lng: route.origin.lng };
+            options.destination = { lat: route.destination.lat, lng: route.destination.lng };
+            options.travelMode = route.typeB.mode;
+            options.transitOptions = { modes: route.typeB.modeTypes };
+
+            directionsService.route(options, (directions, status) => { calculate(directions, status, false) });
         });
     }
+
+    private getDisplays(map: any): any {
+        if (this.directionDisplays.length <= 0) {
+            for (let i = 0; i < 2; i++) {
+                let display = new google.maps.DirectionsRenderer;
+                display.setMap(map);
+                this.directionDisplays[i] = display;
+            }
+        }
+        return this.directionDisplays;
+    }
+
 }
