@@ -15,6 +15,12 @@
     <script src="{{ url_for('static', filename='css/bootstrap3/js/jquery-3.1.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='css/bootstrap3/js/bootstrap.min.js') }}"></script>
 
+    <!-- Load c3.css -->
+    <link href="{{ url_for('static', filename='css/c3.css') }}" rel="stylesheet" type="text/css">
+    <!-- Load d3.js and c3.js -->
+    <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/c3.js') }}"></script>
+
     <script>
     	var app = angular.module('myApp', []);
     	//$interpolateProvider.startSymbol('{[{').endSymbol('}]}');
