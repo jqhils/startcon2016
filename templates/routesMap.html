@@ -25,12 +25,12 @@
 	<form class = "form-horizontal" role= "form">
 			<select class="form-control" name="mode1" ng-model="mode1" style="width:45%; display:inline-block;" id="mode1">
 				<option>Car</option>
-				<option>Train</option>
+				<option>Train and Bus</option>
 				<option>Bus</option>
 			</select>
 			<select class="form-control" style="width:45%; display:inline-block;" name="mode2" ng-model="mode2" id="mode1">
 				<option>Bus</option>
-				<option>Train</option>
+				<option>Train and Bus</option>
 				<option>Car</option>
 			</select><br>
 	</form>
@@ -103,55 +103,15 @@
 		<div class="row">
 				<div style="text-align:center; " class="col-xs-8">
 				<div class="row">
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-	float: right;
-	padding-left: 20px;
-}
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding-left: 20px;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-<table align="right">
-  <tr>
-    <th style="width: 33%"></th>
-    <th style="width: 33%">Car</th>
-    <th style="width: 33%">Bus</th>
-  </tr>
-  <tr>
-    <td>Fuel Consumption</td>
-    <td>2.1 (L/100km)</td>
-    <td>2.5 (L/100km)</td>
-  </tr>
-  <tr>
-    <td>Energy Consumption</td>
-    <td>182 (Wh/km)</td>
-    <td>90 (Wh/km)</td>
-  </tr>
-  <tr>
-    <td>Annual Fuel Cost</td>
-    <td>$509</td>
-    <td>$209</td>
-  </tr>
-
-</table>
-		</div>
-	<br>
+		        </div>
 	</div>
 
     <script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw">
     </script>
 
     <script>
+        var busDistance, transitDistance, drivingDistance;
 
         // Fetch coordinates from form
         var fromCoord = new google.maps.LatLng({{ dest['from'].latitude }}, {{ dest['from'].longitude }});
@@ -160,6 +120,7 @@ tr:nth-child(even) {
         function initialize() {
             var directionsService = new google.maps.DirectionsService;
             var directionsDisplay = new google.maps.DirectionsRenderer;
+
             var mapOptions = {
                 center: new google.maps.LatLng(-33.8698494, 151.1947438),
                 zoom: 12,
@@ -177,21 +138,25 @@ tr:nth-child(even) {
             directionsDisplay.setMap(map);
 
             function renderDirections(result, mode) {
-                var polylineOptionsActual = new google.maps.Polyline({
-                    strokeColor: '#FFFFFF',
-                    strokeOpacity: 0.6,
-                    strokeWeight: 5
-                });
 
                 if (mode == "DRIVING") {
-                    polylineOptionsActual.strokeColor = '#008B8B';
+                    var directionsRenderer = new google.maps.DirectionsRenderer({
+                        polylineOptions: {
+                                strokeColor: "#008B8B",
+                                strokeOpacity: 0.6,
+                                strokeWeight: 5
+                            }
+                        });
                 } else if (mode == "TRANSIT") {
-                    polylineOptionsActual.strokeColor = '#D3143C';
-                } else if (mode == "BUS") {
-                    polylineOptionsActual.strokeColor = "#BC8F8F";
+                    var directionsRenderer = new google.maps.DirectionsRenderer({
+                        polylineOptions: {
+                                strokeColor: "#D3143C",
+                                strokeOpacity: 0.6,
+                                strokeWeight: 5
+                            }
+                        });
                 }
 
-                var directionsRenderer = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
                 directionsRenderer.setMap(map);
                 directionsRenderer.setDirections(result);
             }
@@ -203,6 +168,7 @@ tr:nth-child(even) {
                         destination: end,
                         travelMode: google.maps.DirectionsTravelMode.DRIVING
                     }, function(result) {
+                        drivingDistance = result.routes[0].legs[0].distance.value;
                         renderDirections(result, mode);
                     });
                 } else if (mode == "TRANSIT") {
@@ -211,17 +177,7 @@ tr:nth-child(even) {
                         destination: end,
                         travelMode: google.maps.DirectionsTravelMode.TRANSIT
                     }, function(result) {
-                        renderDirections(result, mode);
-                    });
-                } else if (mode == "BUS") {
-                    directionsService.route({
-                        origin: start,
-                        destination: end,
-                        travelMode: google.maps.DirectionsTravelMode.TRANSIT,
-                        transitOptions: {
-                            modes: ['BUS']
-                        },
-                    }, function(result) {
+                        transitDistance = result.routes[0].legs[0].distance.value;
                         renderDirections(result, mode);
                     });
                 }
@@ -229,7 +185,7 @@ tr:nth-child(even) {
 
             requestDirections(fromCoord, toCoord, "DRIVING");
             requestDirections(fromCoord, toCoord, "TRANSIT");
-            requestDirections(fromCoord, toCoord, "BUS");
+
 
         }
 
