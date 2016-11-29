@@ -13,20 +13,6 @@
 			<div class = "row">
 			</div>
 		</div>
-		<script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw">
-		</script>
-		<script type="text/javascript">
-		  function initialize() {
-			var mapOptions = {
-			  center: new google.maps.LatLng(-33.8698494, 151.1947438),
-			  zoom: 12,
-			  mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-			var map = new google.maps.Map(document.getElementById("map-canvas"),
-				mapOptions);
-		  }
-		  google.maps.event.addDomListener(window, 'load', initialize);
-		</script>
 		<div id="map-canvas"></div>
 	</div><br>
 	<div class="selectModeTitle">
@@ -162,8 +148,91 @@ tr:nth-child(even) {
 	<br>
 	</div>
 
+    <script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw">
+    </script>
+
     <script>
-        destFrom = "{{ dest['from'] }}";
-        destTo = "{{ dest['to'] }}";
+
+        // Fetch coordinates from form
+        var fromCoord = new google.maps.LatLng({{ dest['from'].latitude }}, {{ dest['from'].longitude }});
+        var toCoord = new google.maps.LatLng({{ dest['to'].latitude }}, {{ dest['to'].longitude }});
+
+        function initialize() {
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            var mapOptions = {
+                center: new google.maps.LatLng(-33.8698494, 151.1947438),
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+            directionsDisplay.setMap(null);
+
+            directionsDisplay.setOptions({
+                polylineOptions: {
+                    strokeColor: 'red'
+                }
+            });
+            directionsDisplay.setMap(map);
+
+            function renderDirections(result, mode) {
+                var polylineOptionsActual = new google.maps.Polyline({
+                    strokeColor: '#FFFFFF',
+                    strokeOpacity: 0.6,
+                    strokeWeight: 5
+                });
+
+                if (mode == "DRIVING") {
+                    polylineOptionsActual.strokeColor = '#008B8B';
+                } else if (mode == "TRANSIT") {
+                    polylineOptionsActual.strokeColor = '#D3143C';
+                } else if (mode == "BUS") {
+                    polylineOptionsActual.strokeColor = "#BC8F8F";
+                }
+
+                var directionsRenderer = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
+                directionsRenderer.setMap(map);
+                directionsRenderer.setDirections(result);
+            }
+
+            function requestDirections(start, end, mode) {
+                if (mode == "DRIVING") {
+                    directionsService.route({
+                        origin: start,
+                        destination: end,
+                        travelMode: google.maps.DirectionsTravelMode.DRIVING
+                    }, function(result) {
+                        renderDirections(result, mode);
+                    });
+                } else if (mode == "TRANSIT") {
+                    directionsService.route({
+                        origin: start,
+                        destination: end,
+                        travelMode: google.maps.DirectionsTravelMode.TRANSIT
+                    }, function(result) {
+                        renderDirections(result, mode);
+                    });
+                } else if (mode == "BUS") {
+                    directionsService.route({
+                        origin: start,
+                        destination: end,
+                        travelMode: google.maps.DirectionsTravelMode.TRANSIT,
+                        transitOptions: {
+                            modes: ['BUS']
+                        },
+                    }, function(result) {
+                        renderDirections(result, mode);
+                    });
+                }
+            }
+
+            requestDirections(fromCoord, toCoord, "DRIVING");
+            requestDirections(fromCoord, toCoord, "TRANSIT");
+            requestDirections(fromCoord, toCoord, "BUS");
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 {% endblock %}
