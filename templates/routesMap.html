@@ -113,6 +113,7 @@
                 walk: 0
             };
         var transitDuration, drivingDuration;
+        var transitOneTrip, drivingOneTrip;
         var steps;
 
         // Fetch coordinates from form
@@ -173,7 +174,10 @@
                         drivingDistance = result.routes[0].legs[0].distance;
                         drivingDuration = result.routes[0].legs[0].duration;
                         document.getElementById("drivingDuration").innerHTML = "<span class=\"label label-default\">Car " + drivingDuration.text + "</span>";
+
+                        drivingOneTrip = 0.100*drivingDistance.value;
                         renderDirections(result, mode);
+                        return drivingOneTrip;
                     });
                 } else if (mode == "TRANSIT") {
                     directionsService.route({
@@ -199,55 +203,66 @@
                         }
                         transitDuration = result.routes[0].legs[0].duration;
                         document.getElementById("transitDuration").innerHTML = "<span class=\"label label-default\">Public Transport " + transitDuration.text + "</span>";
+
+                        transitOneTrip = 0.034*transitDistance.train + 0.080*(transitDistance.bus+transitDistance.ferry);
                         renderDirections(result, mode);
+                        return transitOneTrip;
                     });
                 }
             }
 
-            requestDirections(fromCoord, toCoord, "DRIVING");
-            requestDirections(fromCoord, toCoord, "TRANSIT");
+            drivingOneTrip = requestDirections(fromCoord, toCoord, "DRIVING");
+            transitOneTrip = requestDirections(fromCoord, toCoord, "TRANSIT");
 
+            // Map has fully loaded
+            google.maps.event.addListener(map, 'idle', function(){
 
+                // Populate time-series array with data
+                drivingData = ['driving'];
+                transitData = ['transit'];
+                var i = 0;
+                while (i <= 30) {
+                    drivingData.push((i*drivingOneTrip/1000).toFixed(2));
+                    transitData.push((i*transitOneTrip/1000).toFixed(2));
+                    i += 1;
+                }
+
+                var chart = c3.generate({
+                    data: {
+                        columns: [
+                            drivingData
+                        ]
+                    },
+                    axis: {
+                        x: {
+                            label: 'Trips taking the same route'
+                        },
+                        y: {
+                            label: 'Amount of CO2 emitted in grams'
+                        }
+                    }
+                });
+
+                setTimeout(function () {
+                    chart.load({
+                        columns: [
+                            drivingData
+                        ]
+                    });
+                }, 1000);
+
+                setTimeout(function () {
+                    chart.load({
+                        columns: [
+                            transitData
+                        ]
+                    });
+                }, 1500);
+            });
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);
 
-        // Populate time-series array with data
-        drivingData = ['driving']
-        transitData = ['transit']
 
-
-
-        var chart = c3.generate({
-            data: {
-                columns: [
-                    ['driving', 0, 190, 300, 500, 300, 400]
-                ]
-            },
-            axis: {
-                x: {
-                    label: 'Days taking the same route'
-                },
-                y: {
-                    label: 'Amount of CO2 emitted'
-                }
-            }
-        });
-
-        setTimeout(function () {
-            chart.load({
-                columns: [
-                    ['driving', 0, 190, 300, 500, 300, 400]
-                ]
-            });
-        }, 1000);
-
-        setTimeout(function () {
-            chart.load({
-                columns: [
-                    ['transit', 0, 150, 200, 300, 200, 100]
-                ]
-            });
-        }, 1500);
     </script>
 {% endblock %}
