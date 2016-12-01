@@ -202,7 +202,7 @@
                             i += 1;
                         }
                         transitDuration = result.routes[0].legs[0].duration;
-                        document.getElementById("transitDuration").innerHTML = "<span class=\"label label-default\">Public Transport " + transitDuration.text + "</span>";
+                        document.getElementById("transitDuration").innerHTML = "<span class=\"label label-default\">Transit " + transitDuration.text + "</span>";
 
                         transitOneTrip = 0.034*transitDistance.train + 0.080*(transitDistance.bus+transitDistance.ferry);
                         renderDirections(result, mode);
