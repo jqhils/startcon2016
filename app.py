@@ -34,8 +34,8 @@ def routeMap():
             return redirect(url_for('index'))
         return render_template("routesMap.html", dest=dest)
     else:
-            print "Page not loaded with POST"
-            return redirect(url_for('index'))
+        return render_template("routesMap.html")
+
 
 if (__name__ == "__main__"):
     app.run(debug=True)

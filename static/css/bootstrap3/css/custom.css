@@ -9,12 +9,16 @@ body {
     display: compact;
 }
 
+.control-label {
+    text-align: right !important;
+}
+
 .glyphicon {
     font-size: 20px;
 }
 
 .formBack {
-	background-color: #0099cc;
+	background-color: rgba(0, 153, 204, 0.9);
 	padding: 7px;
 	color: white;
 }
@@ -31,6 +35,11 @@ body {
 	padding-top: 10px;
 	padding-bottom: 4px;
 	font-weight: 300;
+}
+
+label {
+    font-weight: 400 !important;
+    padding-top: 5px;
 }
 
 .selectModeTitle {

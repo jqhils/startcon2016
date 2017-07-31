@@ -13,7 +13,7 @@
 		<div class = "row">
 		</div>
 	</div>
-	<div id="map-canvas"></div>
+	<div id="map-canvass"></div>
 </div><br>
 <div class="selectModeTitle">
 	Mode of Transport
@@ -25,12 +25,13 @@
 	<div class="selectModeTitle">
 		Sustainability
 	</div>
-	<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.4)">
+	<div class="comparisonBgrd" style="background-color: rgba(0, 0, 0, 0.1)">
 		<div class="row">
 			<div style="text-align:center;" class="col-xs-6"><h2><div id="drivingDuration">Car 0 minutes</div></h2>
 			<div class="row">
-			<br><div style="float:center; padding-left:35%;">
-					<div class="c100 p0 small orange">
+			<br><div style="width: 50%;
+  margin-left: 30%;" >
+					<div  class="c100 p0 small orange">
 						<span>0%</span>
 						<div class="slice">
 							<div class="bar"></div>
@@ -38,14 +39,16 @@
 						</div>
 					</div>
     			</div>
+                
 				<br>
 				</div>
-				<div class="row percentageStat">More efficient</div>
+				<div class="row percentageStat" style="color:black; text-align:center;">More efficient</div>
 			</div>
-		  	<div style="text-align:center; border-left: thin solid #009900;" class="col-xs-5"><h2>
+		  	<div style="text-align:center; border-left: thin solid rgb(0, 153, 204)" class="col-xs-5"><h2>
 			  <div id="transitDuration">Public Transport 0 minutes</div></h2>
 				<div class="row">
-				<br><div  style="float:center; padding-left:30%;">
+				<br><div style="width: 70%;
+  margin-left: 30%;" >
 			  		<div class="c100 p32 small green">
 					<span>32%</span>
 						<div class="slice">
@@ -55,7 +58,7 @@
 					</div>
     				</div><br>
 				</div>
-				<div class="row percentageStat">More efficient</div>
+				<div class="row percentageStat" style="color:black; text-align:center;">More efficient</div>
 			</div>
 		</div>
 	<br></div>
@@ -84,7 +87,7 @@
 		</div>
 	<br>
 	</div>
-	<div style="text-align:center;background-color: rgba(0, 0, 0, 0)"><br>
+	<div style="text-align:center;background-color: rgba(0, 0, 0, 0.1)"><br>
 		<h2><span class="label label-danger">Emmissions Use</span></h2><br>
     </div>
 
@@ -92,177 +95,4 @@
 
 <div id="chart"></div>
 
-    <script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw">
-    </script>
-
-    <script>
-        var script = document.createElement('script');
-        script.src = 'http://code.jquery.com/jquery-1.11.0.min.js';
-        script.type = 'text/javascript';
-        document.getElementsByTagName('head')[0].appendChild(script);
-    </script>
-
-    <script>
-        var drivingDistance = 0;
-        var transitDistance =
-            {
-                bus: 0,
-                train: 0,
-                ferry: 0,
-                tram: 0,
-                walk: 0
-            };
-        var transitDuration, drivingDuration;
-        var transitOneTrip, drivingOneTrip;
-        var steps;
-
-        // Fetch coordinates from form
-        var fromCoord = new google.maps.LatLng({{ dest['from'].latitude }}, {{ dest['from'].longitude }});
-        var toCoord = new google.maps.LatLng({{ dest['to'].latitude }}, {{ dest['to'].longitude }});
-
-        function initialize() {
-            var directionsService = new google.maps.DirectionsService;
-            var directionsDisplay = new google.maps.DirectionsRenderer;
-
-            var mapOptions = {
-                center: new google.maps.LatLng(-33.8698494, 151.1947438),
-                zoom: 12,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
-            directionsDisplay.setMap(null);
-
-            directionsDisplay.setOptions({
-                polylineOptions: {
-                    strokeColor: 'red'
-                }
-            });
-            directionsDisplay.setMap(map);
-
-            function renderDirections(result, mode) {
-
-                if (mode == "DRIVING") {
-                    var directionsRenderer = new google.maps.DirectionsRenderer({
-                        polylineOptions: {
-                                strokeColor: "#008B8B",
-                                strokeOpacity: 0.6,
-                                strokeWeight: 5
-                            }
-                        });
-                } else if (mode == "TRANSIT") {
-                    var directionsRenderer = new google.maps.DirectionsRenderer({
-                        polylineOptions: {
-                                strokeColor: "#D3143C",
-                                strokeOpacity: 0.6,
-                                strokeWeight: 5
-                            }
-                        });
-                }
-
-                directionsRenderer.setMap(map);
-                directionsRenderer.setDirections(result);
-            }
-
-            function requestDirections(start, end, mode) {
-                if (mode == "DRIVING") {
-                    directionsService.route({
-                        origin: start,
-                        destination: end,
-                        travelMode: google.maps.DirectionsTravelMode.DRIVING
-                    }, function(result) {
-                        drivingDistance = result.routes[0].legs[0].distance;
-                        drivingDuration = result.routes[0].legs[0].duration;
-                        document.getElementById("drivingDuration").innerHTML = "<span class=\"label label-default\">Car " + drivingDuration.text + "</span>";
-
-                        drivingOneTrip = 0.100*drivingDistance.value;
-                        renderDirections(result, mode);
-                        return drivingOneTrip;
-                    });
-                } else if (mode == "TRANSIT") {
-                    directionsService.route({
-                        origin: start,
-                        destination: end,
-                        travelMode: google.maps.DirectionsTravelMode.TRANSIT
-                    }, function(result) {
-                        steps = result.routes[0].legs[0].steps;
-                        var i = 0;
-                        while (i < steps.length) {
-                            if (steps[i].instructions.search('^Train') == 0) {
-                                transitDistance.train += steps[i].distance.value;
-                            } else if (steps[i].instructions.search('^Bus') == 0) {
-                                transitDistance.bus += steps[i].distance.value;
-                            } else if (steps[i].instructions.search('Ferry') == 0) {
-                                transitDistance.ferry += steps[i].distance.value;
-                            } else if (steps[i].instructions.search('Walk') == 0) {
-                                transitDistance.walk += steps[i].distance.value;
-                            } else if (steps[i].instructions.search('Tram') == 0) {
-                                transitDistance.tram += steps[i].distance.value;
-                            }
-                            i += 1;
-                        }
-                        transitDuration = result.routes[0].legs[0].duration;
-                        document.getElementById("transitDuration").innerHTML = "<span class=\"label label-default\">Transit " + transitDuration.text + "</span>";
-
-                        transitOneTrip = 0.034*transitDistance.train + 0.080*(transitDistance.bus+transitDistance.ferry);
-                        renderDirections(result, mode);
-                        return transitOneTrip;
-                    });
-                }
-            }
-
-            drivingOneTrip = requestDirections(fromCoord, toCoord, "DRIVING");
-            transitOneTrip = requestDirections(fromCoord, toCoord, "TRANSIT");
-
-            // Map has fully loaded
-            google.maps.event.addListener(map, 'idle', function(){
-
-                // Populate time-series array with data
-                drivingData = ['driving'];
-                transitData = ['transit'];
-                var i = 0;
-                while (i <= 30) {
-                    drivingData.push((i*drivingOneTrip/1000).toFixed(2));
-                    transitData.push((i*transitOneTrip/1000).toFixed(2));
-                    i += 1;
-                }
-
-                var chart = c3.generate({
-                    data: {
-                        columns: [
-                            drivingData
-                        ]
-                    },
-                    axis: {
-                        x: {
-                            label: 'Trips taking the same route'
-                        },
-                        y: {
-                            label: 'Amount of CO2 emitted in grams'
-                        }
-                    }
-                });
-
-                setTimeout(function () {
-                    chart.load({
-                        columns: [
-                            drivingData
-                        ]
-                    });
-                }, 1000);
-
-                setTimeout(function () {
-                    chart.load({
-                        columns: [
-                            transitData
-                        ]
-                    });
-                }, 1500);
-            });
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
-
-
-    </script>
 {% endblock %}
