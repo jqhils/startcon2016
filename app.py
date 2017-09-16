@@ -16,15 +16,20 @@ def googlecheck():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html",  toForm = 0, fromForm = 0)
 
 @app.route("/routesMap", methods=['GET', 'POST'])
 def routeMap():
     dest = {}
     dest['from'] = None
     dest['to'] = None
+    print("the request method was", request.method)
     if (request.method == "POST"):
         try:
+            print("got to trying")
+            print("from is") 
+            fromForm = str(request.form['destFrom'])
+            toForm = str(request.form['destTo'])
             fromLoc = geolocator.geocode(request.form['destFrom'])
             toLoc = geolocator.geocode(request.form['destTo'])
             dest['from'] = fromLoc
@@ -32,9 +37,11 @@ def routeMap():
         except:
             print "Failed to read off input"
             return redirect(url_for('index'))
-        return render_template("routesMap.html", dest=dest)
+        print("got dest")
+        return render_template("routesMap.html", dest=dest, toForm = toForm, fromForm = fromForm)
     else:
-        return render_template("routesMap.html")
+        print("it was no destination")
+        return render_template("routesMap.html", dest = dest, toForm = 0, fromForm = 0)
 
 
 if (__name__ == "__main__"):

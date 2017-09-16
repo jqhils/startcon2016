@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eco Transport</title>
+<title>EcoTransport</title>
 <head>
     {% block head %}
 	<!--<tite>TEST BOOTSTRAP TEMPLATE</tite>-->
@@ -97,25 +97,77 @@
       function geolocate() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
+            var center = new google.maps.LatLng(-33,151);
             var geolocation = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
             var circle = new google.maps.Circle({
-              center: geolocation,
-              radius: position.coords.accuracy
+              center: center,
+              radius: 2000
             });
             autocomplete.setBounds(circle.getBounds());
           });
         }
       }
 </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPq_aC_7y3PA4Bim15wIhe8RFRguXEjzw&libraries=places&callback=initAutocomplete"
+        async defer></script>
 <body ng-app="myApp">
     <header>
     </header>
+    <nav class="navbar navbar-default navbar-fixed-top">
+
+<div class = "titleBack">
+	<div class="mainTitle">Eco </div>Transport
+</div>
+<div class="formFindBack">
+    <div class="container">
+	<form action="/routesMap" method="POST" class = "form-horizontal" role= "form">
+        <br/>
+		<div class = "form-group">
+			<label class = "col-xs-2 control-label"  for="destFrom"> From:</label>
+			<div class = "col-xs-10">
+                {% if fromForm != 0 %}
+                <input type = "text" class = "form-control" id = "autocomplete1" name="destFrom" onFocus="geolocate()" value = "{{ fromForm }}">
+
+                {% else %}
+				<input type = "text" class = "form-control" id = "autocomplete1" name="destFrom" onFocus="geolocate()" placeholder="Enter Start Destination">
+                
+                {% endif %}
+			</div>
+		</div>
+		<div class = "form-group">
+			<label class = "control-label col-xs-2" for="destTo"> To:</label>
+			<div class = "col-xs-10">
+                {% if toForm != 0 %}    
+                <input type = "text" class = "form-control" id = "autocomplete2" name="destTo" onFocus="geolocate()" value= "{{ toForm }}">
+
+                {% else %}
+
+				<input type = "text" class = "form-control" id = "autocomplete2" name="destTo" onFocus="geolocate()" placeholder="Enter Final Destination">
+                {% endif %}
+			</div>
+		</div>
+        <div class="form-group">        
+            <div class="col-xs-offset-2 col-xs-10">
+                <button class="btn btn-default" id="findRoute">Find Routes</button>
+            </div>
+        </div>
+	</form>
+    </div>
+    </div>
+</nav>
     {% block content%}
     {% endblock %}
     <footer>
-    </footer>
+        <div id="footer" class="container">
+            <br/>
+            <br/>
+            <br/>
+        StartCon 2016, Powered by Flask, Google Maps API and chartJS
+            <p>All emissions data and metrics based on estimates</p>
+            </div>
+</footer>
 </body>
 </html>
